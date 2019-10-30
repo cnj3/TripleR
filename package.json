@@ -5,7 +5,9 @@
   "dependencies": {
     "@material-ui/core": "^4.5.1",
     "@material-ui/icons": "^4.5.1",
+    "material-table": "^1.53.0",
     "react": "^16.11.0",
+    "react-datepicker": "^2.9.6",
     "react-dom": "^16.11.0",
     "react-scripts": "3.2.0"
   },
