@@ -21,10 +21,9 @@ const UpdateReservation = ({ classes }) => {
             {formOpen ? 
                 <form>
                     <Typography>Info Info Info Info</Typography>
-                </form> : null }
+                </form>:null}
         </>
     )
-
 }
 
 export default UpdateReservation
