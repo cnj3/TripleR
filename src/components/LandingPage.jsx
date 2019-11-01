@@ -4,6 +4,8 @@ import TimePicker from 'react-time-picker';
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
+import ClearIcon from '@material-ui/icons/Clear';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 // import NavigateNextIcon from '@material-ui/icons/NavigateNextRounded';
 // import SkipNextIcon from '@material-ui/icons/SkipNext';
 import SearchIcon from '@material-ui/icons/SearchRounded'
@@ -201,7 +203,9 @@ const LandingPage = () => {
           NextPage: ChevronRightIcon, 
           PreviousPage: ChevronLeftIcon,
           FirstPage: FirstPageIcon,
-          LastPage: LastPageIcon
+          LastPage: LastPageIcon,
+          Clear: ClearIcon,
+          SortArrow: ArrowUpwardIcon
         }}
         
       />

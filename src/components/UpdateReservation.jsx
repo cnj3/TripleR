@@ -11,9 +11,16 @@ const UpdateReservation = ({ classes, data }) => {
 
     const [formOpen, setFormOpen] = useState(false)
     const [viewRequest, setViewRequest] = useState(false);
+    const [showData, setShowData] = useState(true);
 
     const displayForm = () => {
         setFormOpen(true);
+    }
+
+    const deleteRequest = () => {
+        console.log("delete it")
+        console.log(data)
+        setShowData(false)
     }
 
     return (
@@ -24,14 +31,14 @@ const UpdateReservation = ({ classes, data }) => {
                     label="Request ID"
                     margin="normal"
                 />
-                <Button>Delete</Button>
+                <Button onClick= {() => deleteRequest()}>Delete</Button>
                 <Button onClick={() => {setViewRequest(true)}}>View</Button>
                 <Button onClick={displayForm}>Edit</Button>
                 {formOpen ? 
                     <form>
                         <Typography>Info Info Info Info</Typography>
                     </form>:null}
-                {viewRequest ?
+                {viewRequest && showData ?
                     <Paper className={classes.root}>
                         <Table className={classes.table} aria-label="simple table">
                             <TableHead>
