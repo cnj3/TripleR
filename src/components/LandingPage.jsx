@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import MaterialTable from 'material-table';
-import DatePicker from "react-datepicker";
 import TimePicker from 'react-time-picker';
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,7 +7,7 @@ import AddIcon from '@material-ui/icons/Add';
 // import NavigateNextIcon from '@material-ui/icons/NavigateNextRounded';
 // import SkipNextIcon from '@material-ui/icons/SkipNext';
 import SearchIcon from '@material-ui/icons/SearchRounded'
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from '@material-ui/core'
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, TextField } from '@material-ui/core'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import FirstPageIcon from '@material-ui/icons/FirstPage';
@@ -17,22 +16,9 @@ import UpdateReservation from './UpdateReservation'
 
 import axios from 'axios';
 
-
-import "react-datepicker/dist/react-datepicker.css";
-
-
-
-function rand() {
-  return Math.round(Math.random() * 20) - 10;
-}
-
 function getModalStyle() {
-  const top = 50 + rand();
-  const left = 50 + rand();
   return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
+    width: 'fit-content'
   };
 }
 
@@ -47,9 +33,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MaterialTableDemo() {
+const LandingPage = () => {
   const classes = useStyles();
-  const [startDate, setStartDate] = useState();
+  const [startDate, setStartDate] = useState('');
   const [startTime, setStartTime] = useState();
   const [endTime, setEndTime] = useState();
   const [open, setOpen] = useState();
@@ -57,6 +43,10 @@ export default function MaterialTableDemo() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [items, setItems] = useState();
   const [openRequestID, setOpenRequestID] = useState(false);
+  const [groupName, setGroupName] = useState();
+  const [userName, setUserName] = useState();
+  const [userEmail, setUserEmail] = useState();
+  const [submitData, setSubmitData] = useState({});
   // const [state, setState] = useState({
     const [state] = useState({
     columns: [
@@ -68,6 +58,7 @@ export default function MaterialTableDemo() {
   });
 
   useEffect(() => {
+    console.log(rowData.building_name + " " + rowData.room_num + " " + rowData.capacity + " " + startDate + " " + startTime + " " + endTime + " " + groupName + " " + userName + " " + userEmail)
     console.log("here")
     fetch("http://10.192.129.122:8080/Spring4/data/br")
     .then(res => res.json(),  console.log('oooo'))
@@ -169,9 +160,16 @@ export default function MaterialTableDemo() {
   return (
     <>
       <Button onClick={handleOpenRequestID}>Input RequestID Here</Button>
-      <DatePicker
-          selected={startDate}
+      {/* <DatePicker
+          value={startDate}
           onChange={handleDateChange}
+          dayAriaLabel
+      /> */}
+      <TextField
+        id="date"
+        type="date"
+        format={'MM/DD/YYYY'}
+        onChange={e => {setStartDate(e.target.value)}}
       />
       <TimePicker
         onChange={handleStartTimeChange}
@@ -188,10 +186,12 @@ export default function MaterialTableDemo() {
         actions={[
           {
             icon: AddIcon,
-            tooltip: 'Save User',
+            tooltip: 'Book Room',
             onClick: (event, data) => {
+               if (startDate && startTime && endTime) {
                 setOpen(true)
                 setRowData(data)
+               }
               
             }
           }
@@ -240,23 +240,45 @@ export default function MaterialTableDemo() {
           <p id="simple-modal-description">
             Please fill out the following information and verify the existing fields.
           </p>
-          <form>
-          <div><label>
-              RSO Name:
-              <input type="text" name="rsoName" />
-              </label></div>
-              <div>
-              <label>
-              Contact Name:
-              <input type="text" name="contactName" />
-              </label> </div> 
-              <div> 
-              <label>
-              Contact Person Email:
-              <input type="text" name="contactEmail" />
-              </label> </div>
-              <input type="submit" value="Submit" />
-          </form>
+          {/* <form>
+          <div><label> */}
+            
+              <TextField
+                value={groupName}
+                error ={groupName === 0 ? false : true }
+                onChange={e => {setGroupName(e.target.value)}}
+                label="RSO Name: "
+              />
+              <TextField
+                value={userName}
+                name="Name"
+                hintText="Name"
+                floatingLabelText="Name"
+                error ={userName === 0 ? false : true }
+                helperText={userName}
+                onChange={e => {setUserName(e.target.value)}}
+                label="Contact Name: "
+              />
+              <TextField
+                value={userEmail}
+                name="Email"
+                hintText="Email"
+                floatingLabelText="Email"
+                error ={userEmail === 0 ? false : true }
+                helperText={userEmail}
+                onChange={e => {setUserEmail(e.target.value)}}
+                label="Contact Person Email: "
+              />
+              
+              <Button 
+                disabled={!groupName || !userName || !userEmail}
+                onClick={() => {
+                  // console.log(rowData.building_name + " " + rowData.room_num + " " + rowData.capacity + " " + startDate + " " + startTime + " " + endTime + " " + groupName + " " + userName + " " + userEmail)
+                  setSubmitData({building_name: rowData.building_name, room_num: rowData.room_num, capacity: rowData.capacity, sd: startDate, st: startTime, et: endTime, group_name: groupName, user_name: userName, user_email: userEmail})
+                  setOpen(false)
+                }}
+              >Submit</Button>
+        
         </div>
       </Modal>
       <Modal
@@ -264,8 +286,13 @@ export default function MaterialTableDemo() {
         aria-describedby="simple-modal-description"
         open={openRequestID}
         onClose={handleCloseRequestID}>
-          <UpdateReservation />
+          <UpdateReservation 
+            classes={classes}
+            data = {submitData}
+          />
       </Modal>
     </>
   );
 }
+
+export default LandingPage
