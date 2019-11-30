@@ -4,12 +4,13 @@ import TimePicker from 'react-time-picker';
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
 import ClearIcon from '@material-ui/icons/Clear';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 // import NavigateNextIcon from '@material-ui/icons/NavigateNextRounded';
 // import SkipNextIcon from '@material-ui/icons/SkipNext';
 import SearchIcon from '@material-ui/icons/SearchRounded'
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, TextField, Typography } from '@material-ui/core'
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, TextField, Typography, Slider } from '@material-ui/core'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import FirstPageIcon from '@material-ui/icons/FirstPage';
@@ -33,7 +34,55 @@ const useStyles = makeStyles(theme => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
+  timeDiv: {
+    width: '100%',
+    flexDirection: 'row'
+  },
+  datePicker: {
+    marginRight: '5%',
+    width: '20%'
+  },
+  fromTime: {
+    marginRight: '5%',
+    width: '20%',
+    justifyContent: 'center',
+  }, 
+  toTime: {
+    width: '20%',
+    justifyContent: 'center',
+  },
 }));
+
+const marks = [
+  {
+    value: 0,
+    label: '0',
+  },
+  {
+    value: 10,
+    label: '10',
+  },
+  {
+    value: 20,
+    label: '20',
+  },
+  {
+    value: 30,
+    label: '30',
+  },
+  {
+    value: 40,
+    label: '40',
+  },
+  {
+    value: 50,
+    label: '50',
+  },
+  {
+    value: 60,
+    label: '60',
+  },
+];
 
 const LandingPage = ( ) => {
 
@@ -56,6 +105,8 @@ const LandingPage = ( ) => {
   // const [submitData, setSubmitData] = useState({});
   const [submitData] = useState({});
   const [requestID, setRequestID] = useState();
+  const [viewCap, setViewCap] = useState(false);
+  const [cap, setCap] = useState();
   // const [state, setState] = useState({
   const [state, setState] = useState({
     columns: [],
@@ -116,29 +167,53 @@ const LandingPage = ( ) => {
   const handleCloseRequestID = () => {
     setOpenRequestID(false);
   }
+  
+  const handleFindMeARoom = () => {
+    setViewCap(!viewCap);
+  }
 
   return (
     <>
       <Button onClick={handleOpenRequestID}>Input RequestID Here</Button>
+      <Button onClick={handleFindMeARoom}>{!viewCap ? <><AddIcon />Let us find a room for you</> : <><RemoveIcon />Collapse</>}  </Button>
+      {viewCap && <div style={{width: '50%'}}>
+        <Slider
+          defaultValue={1}
+          aria-labelledby="discrete-slider-always"
+          marks={marks}
+          valueLabelDisplay="on"
+          min={1}
+          max={60}
+          onChange={(e, capVal) => {setCap(capVal)}}
+        />
+        <Button onClick={() => {console.log(cap)}}>Submit</Button>
+      </div>}
       {/* <DatePicker
           value={startDate}
           onChange={handleDateChange}
           dayAriaLabel
       /> */}
-      <TextField
-        id="date"
-        type="date"
-        format={'MM/DD/YYYY'}
-        onChange={e => {setStartDate(e.target.value)}}
-      />
-      <TimePicker
-        onChange={handleStartTimeChange}
-        value={startTime}
-      />
-      <TimePicker
-        onChange={handleEndTimeChange}
-        value={endTime}
-      />
+      <div className={classes.timeDiv}>
+        <TextField
+          id="date"
+          type="date"
+          format={'MM/DD/YYYY'}
+          onChange={e => {setStartDate(e.target.value)}}
+          className={classes.datePicker}
+        />
+        <TimePicker
+          onChange={handleStartTimeChange}
+          value={startTime}
+          className={classes.fromTime}
+          disableClock={true}
+        />
+        <TimePicker
+          onChange={handleEndTimeChange}
+          value={endTime}
+          className={classes.toTime}
+          disableClock={true}
+        />
+      </div>
       <MaterialTable
         title="RSO Room Reserve"
         columns={state.columns}

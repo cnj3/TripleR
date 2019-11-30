@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, TextField, Typography} from '@material-ui/core'
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, TextField, Typography, withStyles } from '@material-ui/core'
 import axios from 'axios';
 import TimePicker from 'react-time-picker';
 
 
-// const styles = withStyles( theme => ({
-//     halloween: {
-
-//     }
-// }))
+const styles = () => ({
+    fullDiv: {
+        width: '100%',
+        height: '100%'
+    },
+    paper: {
+        width: '60%',
+        left: '20%',
+        top: '30%',
+        minWidth: '60%'
+    }
+})
 
 const UpdateReservation = ({ classes, data }) => {
 
@@ -27,14 +34,7 @@ const UpdateReservation = ({ classes, data }) => {
     const [endTime, setEndTime] = useState();
     const [requestData, setRequestData] = useState({});
 
-    // const displayForm = () => {
-    //     setFormOpen(true);
-    // }
-
     const deleteRequest = () => {
-        // console.log("delete it")
-        // console.log(data)
-        // console.log(requestID)
         setShowData(false)
         
         axios.get(`http://${SERVER_ADDRESS}:8080/Spring4/data/deleteRequest?request_id=${requestID}`, {
@@ -49,13 +49,13 @@ const UpdateReservation = ({ classes, data }) => {
             //const posts = res.data.data.children.map(obj => obj.data);
             // console.log("hihihi")
             // console.log(res.data)
-            if (res.data === 0) {
-                setDNE(true)
-            }
+                if (res.data === 0) {
+                    setDNE(!dne)
+                }
             
             
             // this.setState({ posts });
-        });
+            }).catch(error => {console.log(error)});
     }
 
     const displayData = () => {
@@ -77,16 +77,16 @@ const UpdateReservation = ({ classes, data }) => {
             // console.log(requestData)
             
             // this.setState({ posts });
-        });
+        }).catch(error => {console.log(error)});
     }
 
     const handleViewRequest = () => {
-        setViewRequest(true)
+        setViewRequest(!viewRequest)
         displayData();
     }
 
     const handleEditRequest = () => {
-        setEditing(true)
+        setEditing(!editing)
         displayData();
     }
 
@@ -104,10 +104,11 @@ const UpdateReservation = ({ classes, data }) => {
             // console.log("hihihi")
             // console.log(res.data + "HIHIHIHIHIH")
             setRequestData(res.data)
+            setEditing(!editing)
             // console.log(requestData)
             
             // this.setState({ posts });
-        });
+        }).catch(error => {console.log(error)});
     }
 
     const handleStartTimeChange = time => {
@@ -119,8 +120,8 @@ const UpdateReservation = ({ classes, data }) => {
       }
 
     return (
-        <>
-            <Paper>
+        <div className={classes.fullDiv}>
+            <Paper className={classes.paper}>
                 <TextField
                     id="standard-basic"
                     label="Request ID"
@@ -180,8 +181,8 @@ const UpdateReservation = ({ classes, data }) => {
                         <Button onClick={handleDoneEditing}>Done</Button>
                     </>}
             </Paper>
-        </>
+        </div>
     )
 }
 
-export default UpdateReservation
+export default withStyles(styles)(UpdateReservation)
