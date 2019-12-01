@@ -36,7 +36,6 @@ const useStyles = makeStyles(theme => ({
   },
   timeDiv: {
     width: '100%',
-    flexDirection: 'row'
   },
   datePicker: {
     marginRight: '5%',
@@ -105,8 +104,12 @@ const LandingPage = ( ) => {
   // const [submitData, setSubmitData] = useState({});
   const [submitData] = useState({});
   const [requestID, setRequestID] = useState();
+  const [conflictRequestID, setConflictRequestID] = useState();
   const [viewCap, setViewCap] = useState(false);
   const [cap, setCap] = useState();
+  const [openConflict, setOpenConflict] = useState(false);
+
+
   // const [state, setState] = useState({
   const [state, setState] = useState({
     columns: [],
@@ -172,11 +175,74 @@ const LandingPage = ( ) => {
     setViewCap(!viewCap);
   }
 
+  const handleConflictRequest = () => {
+    setOpenConflict(!openConflict)
+    console.log("YEET")
+  }
+
+  const handleCapSubmit = () => {
+    setOpen(true);
+  }
+
+  const handleRoomHelp = () => {
+    setOpen(true);
+  }
+
   return (
     <>
+
       <Button onClick={handleOpenRequestID}>Input RequestID Here</Button>
       <Button onClick={handleFindMeARoom}>{!viewCap ? <><AddIcon />Let us find a room for you</> : <><RemoveIcon />Collapse</>}  </Button>
+      <Button onClick={handleConflictRequest}> CONFLICT </Button>
+        <Modal
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        open={openConflict}
+        onClose={openConflict}> 
+        <div style={modalStyle} className={classes.paper}> 
+        <div> 
+
+            <p> That room is not available! Find another room? </p>
+            <Button onClick={handleRoomHelp}> yes </Button>
+            <Button onClick={handleConflictRequest}> close </Button>
+          </div></div>
+
+          
+          
+        </Modal>
+      
       {viewCap && <div style={{width: '50%'}}>
+        <div style={{width: '100%'}}>
+          <TextField
+            value={groupName}
+            error ={groupName === 0 ? false : true }
+            style={{marginRight: '5%', width: '20%'}}
+            onChange={e => {setGroupName(e.target.value)}}
+            label="RSO Name: "
+          />
+          <TextField
+            value={userName}
+            style={{marginRight: '5%', width: '20%', justifyContent: 'center'}}
+            name="Name"
+            hintText="Name"
+            floatingLabelText="Name"
+            error ={userName === 0 ? false : true }
+            helperText={userName}
+            onChange={e => {setUserName(e.target.value)}}
+            label = "Contact Name: "
+          />
+          <TextField
+            value = {userEmail}
+            style = {{width: '20%', justifyContent: 'center'}}
+            name = "Email"
+            hintText = "Email"
+            floatingLabelText = "Email"
+            error = {userEmail === 0 ? false : true }
+            helperText = {userEmail}
+            onChange = {e => {setUserEmail(e.target.value)}}
+            label = "Contact Person Email: "
+          />
+        </div>
         <Slider
           defaultValue={1}
           aria-labelledby="discrete-slider-always"
@@ -186,7 +252,7 @@ const LandingPage = ( ) => {
           max={60}
           onChange={(e, capVal) => {setCap(capVal)}}
         />
-        <Button onClick={() => {console.log(cap)}}>Submit</Button>
+        
       </div>}
       {/* <DatePicker
           value={startDate}
@@ -214,7 +280,8 @@ const LandingPage = ( ) => {
           disableClock={true}
         />
       </div>
-      <MaterialTable
+      {viewCap && <Button onClick={handleCapSubmit}>Submit</Button>}
+      {!viewCap && <MaterialTable
         title="RSO Room Reserve"
         columns={state.columns}
         data={state.data}
@@ -241,7 +308,7 @@ const LandingPage = ( ) => {
           SortArrow: ArrowUpwardIcon
         }}
         
-      />
+      />}
       <Modal
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
@@ -249,7 +316,10 @@ const LandingPage = ( ) => {
         onClose={handleClose}
       >
         <div style={modalStyle} className={classes.paper}>
-          <h2 id="simple-modal-title">Reserve this room!</h2>
+          <div>
+            <h2 id="simple-modal-title">Reserve this room!</h2>
+            {cap && <Typography>Capacity: {cap}</Typography>}
+          </div>
           <Paper className={classes.root}>
             <Table className={classes.table} aria-label="simple table">
               <TableHead>
