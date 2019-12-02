@@ -10,12 +10,14 @@ import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 // import NavigateNextIcon from '@material-ui/icons/NavigateNextRounded';
 // import SkipNextIcon from '@material-ui/icons/SkipNext';
 import SearchIcon from '@material-ui/icons/SearchRounded'
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, TextField, Typography, Slider } from '@material-ui/core'
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import LastPageIcon from '@material-ui/icons/LastPage';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, TextField, Typography, Slider, IconButton } from '@material-ui/core'
+import ChevronRightIcon from '@material-ui/icons/ChevronRight'
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
+import FirstPageIcon from '@material-ui/icons/FirstPage'
+import LastPageIcon from '@material-ui/icons/LastPage'
+import CloseIcon from '@material-ui/icons/CloseRounded'
 import UpdateReservation from './UpdateReservation'
+
 
 import axios from 'axios';
 
@@ -86,8 +88,8 @@ const marks = [
 const LandingPage = ( ) => {
 
 
-  const SERVER_ADDRESS = '10.192.129.122'
-
+  // const SERVER_ADDRESS = '10.192.129.122'
+  const SERVER_ADDRESS = '172.20.10.8'
 
   const classes = useStyles();
   const [startDate, setStartDate] = useState('');
@@ -104,7 +106,7 @@ const LandingPage = ( ) => {
   // const [submitData, setSubmitData] = useState({});
   const [submitData] = useState({});
   const [requestID, setRequestID] = useState();
-  const [conflictRequestID, setConflictRequestID] = useState();
+  // const [conflictRequestID, setConflictRequestID] = useState();
   const [viewCap, setViewCap] = useState(false);
   const [cap, setCap] = useState();
   const [openConflict, setOpenConflict] = useState(false);
@@ -193,17 +195,42 @@ const LandingPage = ( ) => {
 
       <Button onClick={handleOpenRequestID}>Input RequestID Here</Button>
       <Button onClick={handleFindMeARoom}>{!viewCap ? <><AddIcon />Let us find a room for you</> : <><RemoveIcon />Collapse</>}  </Button>
-      <Button onClick={handleConflictRequest}> CONFLICT </Button>
+      {/* <Button onClick={handleConflictRequest}> CONFLICT </Button> */}
         <Modal
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-        open={openConflict}
-        onClose={openConflict}> 
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+          open={openConflict}
+          onClose={openConflict}
+        > 
         <div style={modalStyle} className={classes.paper}> 
         <div> 
 
             <p> That room is not available! Find another room? </p>
-            <Button onClick={handleRoomHelp}> yes </Button>
+            {/* <Button onClick={handleRoomHelp}> yes </Button> */}
+            <Button onClick={() => {
+                    axios.get(`http://${SERVER_ADDRESS}:8080/Spring4/data/recommendRoom?building_name=${rowData.building_name}&room_num=${rowData.room_num}&date=${startDate}&start_time=${startTime}:00&end_time=${endTime}:00`, {
+                      headers: {
+                        'Access-Control-Allow-Origin': '*',
+                      }, 
+                      proxy: {
+                        host: {SERVER_ADDRESS},
+                        port: 8080
+                      }})
+                    .then(res => {
+                      console.log("hihihi")
+                      console.log(res.data)
+                      console.log(requestID)
+                      {requestID === -1 ? setOpenConflict(!openConflict) : setOpenConflict(openConflict)}
+                      // setOpenConflict(!openConflict)
+                      console.log(open)
+                      {requestID === -1 ? setOpen(!open) : setOpenConflict(open)}
+                      // setOpen(!open)
+                      console.log(open)
+                      setRowData(res.data)
+                    });
+                  
+                }}>yes</Button>
+
             <Button onClick={handleConflictRequest}> close </Button>
           </div></div>
 
@@ -304,7 +331,7 @@ const LandingPage = ( ) => {
           PreviousPage: ChevronLeftIcon,
           FirstPage: FirstPageIcon,
           LastPage: LastPageIcon,
-          Clear: ClearIcon,
+          Clear: CloseIcon,
           SortArrow: ArrowUpwardIcon
         }}
         
@@ -316,9 +343,10 @@ const LandingPage = ( ) => {
         onClose={handleClose}
       >
         <div style={modalStyle} className={classes.paper}>
-          <div>
-            <h2 id="simple-modal-title">Reserve this room!</h2>
+          <div style={{display: 'flex', flexDirection: 'row'}}>
+            <h2 id="simple-modal-title" style={{flexGrow: 1}}>Reserve this room!</h2>
             {cap && <Typography>Capacity: {cap}</Typography>}
+            <IconButton onClick={() => {setOpen(!open)}}><CloseIcon /></IconButton>
           </div>
           <Paper className={classes.root}>
             <Table className={classes.table} aria-label="simple table">
@@ -393,19 +421,21 @@ const LandingPage = ( ) => {
                         port: 8080
                       }})
                     .then(res => {
-                      //const posts = res.data.data.children.map(obj => obj.data);
-                      console.log("hihihi")
-                      console.log(res.data)
                       setRequestID(res.data)
+                      console.log("HELLO" + res.data)
+                      // console.log(res.data == -1)
+                      // console.log(res.data == 01)
+                      {res.data === -1 ? setOpenConflict(!openConflict) : setOpenConflict(openConflict)}
+                      {res.data === -1 ? setOpen(!open) : setOpen(open)}
                       
-                      // this.setState({ posts });
                     });
                   
 
                   //setOpen(false)
                 }}
               >Submit</Button>
-              <Typography>{requestID}</Typography>
+              <Typography>{requestID === -1 ? "" : requestID}</Typography>
+              {/* {requestID === -1 } */}
         </div>
       </Modal>
       <Modal

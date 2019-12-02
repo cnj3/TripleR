@@ -20,7 +20,8 @@ const styles = () => ({
 const UpdateReservation = ({ classes, data }) => {
 
 
-    const SERVER_ADDRESS = '10.192.129.122'
+    // const SERVER_ADDRESS = '10.192.129.122'
+    const SERVER_ADDRESS = '172.20.10.8'
 
 
     const [formOpen, setFormOpen] = useState(false)
@@ -75,7 +76,7 @@ const UpdateReservation = ({ classes, data }) => {
             // console.log(res.data + "basd;fajs;fjalskdjf")
             setRequestData(res.data)
             // console.log(requestData)
-            
+            // console.log(res.data)
             // this.setState({ posts });
         }).catch(error => {console.log(error)});
     }
@@ -102,7 +103,7 @@ const UpdateReservation = ({ classes, data }) => {
             .then(res => {
             //const posts = res.data.data.children.map(obj => obj.data);
             // console.log("hihihi")
-            // console.log(res.data + "HIHIHIHIHIH")
+            console.log(res.data + "HIHIHIHIHIH")
             setRequestData(res.data)
             setEditing(!editing)
             // console.log(requestData)
