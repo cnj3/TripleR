@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, TextField, Typography, withStyles } from '@material-ui/core'
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, TextField, Typography, withStyles, IconButton } from '@material-ui/core'
 import axios from 'axios';
 import TimePicker from 'react-time-picker';
-
+import CloseIcon from '@material-ui/icons/CloseRounded'
 
 const styles = () => ({
     fullDiv: {
@@ -17,11 +17,11 @@ const styles = () => ({
     }
 })
 
-const UpdateReservation = ({ classes, data }) => {
+const UpdateReservation = ({ classes, data, close }) => {
 
 
-    // const SERVER_ADDRESS = '10.192.129.122'
-    const SERVER_ADDRESS = '172.20.10.8'
+    const SERVER_ADDRESS = '10.192.129.122'
+    // const SERVER_ADDRESS = '172.20.10.8'
 
 
     const [formOpen, setFormOpen] = useState(false)
@@ -132,6 +132,7 @@ const UpdateReservation = ({ classes, data }) => {
                 <Button onClick= {deleteRequest}>Delete</Button>
                 <Button onClick={handleViewRequest}>View</Button>
                 <Button onClick={handleEditRequest}>Edit</Button>
+                <IconButton onClick={close}><CloseIcon /></IconButton>
                 {dne && <Typography>Sorry that does not exist</Typography>}
                 {formOpen ? 
                     <form>

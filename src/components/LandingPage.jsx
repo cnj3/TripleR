@@ -88,8 +88,8 @@ const marks = [
 const LandingPage = ( ) => {
 
 
-  // const SERVER_ADDRESS = '10.192.129.122'
-  const SERVER_ADDRESS = '172.20.10.8'
+  const SERVER_ADDRESS = '10.192.129.122'
+  // const SERVER_ADDRESS = '172.20.10.8'
 
   const classes = useStyles();
   const [startDate, setStartDate] = useState('');
@@ -184,6 +184,29 @@ const LandingPage = ( ) => {
 
   const handleCapSubmit = () => {
     setOpen(true);
+
+    //http://10.192.129.122:8080/Spring4/data/suggestRoom?date=2020-05-23&start_time=20:00:00&end_time=20:30:00&capacity=1
+    //http://${SERVER_ADDRESS}:8080/Spring4/data/recommendRoom?building_name=${rowData.building_name}&room_num=${rowData.room_num}&date=${startDate}&start_time=${startTime}:00&end_time=${endTime}:00
+    axios.get(`http://${SERVER_ADDRESS}:8080/Spring4/data/suggestRoom?date=${startDate}&start_time=${startTime}:00&end_time=${endTime}:00&capacity=${cap}`, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }, 
+      proxy: {
+        host: {SERVER_ADDRESS},
+        port: 8080
+      }})
+    .then(res => {
+      console.log("hihihi")
+      console.log(res.data)
+      console.log(requestID)
+      {requestID === -1 ? setOpenConflict(!openConflict) : setOpenConflict(openConflict)}
+      // setOpenConflict(!openConflict)
+      console.log(open)
+      {requestID === -1 ? setOpen(!open) : setOpenConflict(open)}
+      // setOpen(!open)
+      console.log(open)
+      setRowData(res.data)
+    });
   }
 
   const handleRoomHelp = () => {
@@ -267,16 +290,17 @@ const LandingPage = ( ) => {
             error = {userEmail === 0 ? false : true }
             helperText = {userEmail}
             onChange = {e => {setUserEmail(e.target.value)}}
-            label = "Contact Person Email: "
+            label = "Contact Email: "
           />
         </div>
         <Slider
           defaultValue={1}
           aria-labelledby="discrete-slider-always"
-          marks={marks}
+          marks
+          step={5}
           valueLabelDisplay="on"
           min={1}
-          max={60}
+          max={1000}
           onChange={(e, capVal) => {setCap(capVal)}}
         />
         
@@ -317,10 +341,10 @@ const LandingPage = ( ) => {
             icon: AddIcon,
             tooltip: 'Book Room',
             onClick: (event, data) => {
-               if (startDate && startTime && endTime) {
+              if (startDate && startTime && endTime) {
                 setOpen(true)
                 setRowData(data)
-               }
+              }
               
             }
           }
@@ -402,7 +426,7 @@ const LandingPage = ( ) => {
                 error ={userEmail === 0 ? false : true }
                 helperText={userEmail}
                 onChange={e => {setUserEmail(e.target.value)}}
-                label="Contact Person Email: "
+                label="Contact Email: "
               />
               
               <Button 
@@ -446,6 +470,7 @@ const LandingPage = ( ) => {
           <UpdateReservation 
             classes={classes}
             data = {submitData}
+            clsoe = {handleCloseRequestID}
           />
       </Modal>
     </>
